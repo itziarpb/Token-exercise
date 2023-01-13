@@ -11,7 +11,7 @@ from api.models import db
 from api.routes import api
 from api.admin import setup_admin
 from api.commands import setup_commands
-from flask_jwt_extended import JWTManager #añadido
+from flask_jwt_extended import JWTManager #añadido para hacer el login
 
 
 #from models import Person
@@ -21,8 +21,10 @@ static_file_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../
 app = Flask(__name__)
 app.url_map.strict_slashes = False
 
-app.config["JWT_SECRET_KEY"] = "super-secret"  # Change this! #añadido
-jwt = JWTManager(app) #añadido
+#añadido para hacer el login (despues de app =Flask)
+app.config["JWT_SECRET_KEY"] = "super-secret"  # Change this! 
+jwt = JWTManager(app)
+#añadido para hacer el login 
 
 # database condiguration
 db_url = os.getenv("DATABASE_URL")

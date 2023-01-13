@@ -12,6 +12,9 @@ export const Home = () => {
       <Link to="/singup">
         <span className="navbar-brand mb-0 h1">Registro</span>
       </Link>
+      <Link to="/login">
+        <span className="navbar-brand mb-0 h1">Iniciar sesión</span>
+      </Link>
     </div>
   );
 };

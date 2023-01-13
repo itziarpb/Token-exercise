@@ -1,44 +1,44 @@
 import React, { useState } from "react";
 
-const Register = () => {
-  const [formData, setFormData] = useState({});
+const FormLogin = () => {
+  const [loginData, setLoginData] = useState({});
 
   const handleChange = (event) => {
     console.log(event.target.value);
-    setFormData({ ...formData, [event.target.name]: event.target.value });
+    setLoginData({ ...loginData, [event.target.name]: event.target.value });
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    fetch(process.env.BACKEND_URL + "/api/users", {
+    console.log(loginData);
+
+    fetch(process.env.BACKEND_URL + "/api/login", {
       method: "POST",
-      body: JSON.stringify(formData),
+      body: JSON.stringify({
+        email: loginData.email,
+        password: loginData.password,
+      }),
       headers: {
         "Content-Type": "application/json",
       },
-      // mode: "cors",
-    })
-      .then((res) => res.json())
-      .catch((error) => console.error("Error:", error))
-      .then((response) => console.log("Success:", response));
+    }).then((resp) => resp.json());
+    if (!resp.ok) throw Error("There was a problem in the login request");
+
+    if (resp.status === 401) {
+      throw "Invalid credentials";
+    } else if (resp.status === 400) {
+      throw "Invalid email or password format";
+    }
+    const data = resp.json();
+    // save your token in the localStorage
+    //also you should set your user into the store using the setStore function
+    localStorage.setItem("jwt-token", data.token);
+
+    return data;
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="mb-3 row">
-        <label for="inputName" className="col-sm-2 col-form-label">
-          Usuario
-        </label>
-        <div className="col-sm-10">
-          <input
-            type="text"
-            className="form-control"
-            id="inputName"
-            name="username"
-            onChange={handleChange}
-          />
-        </div>
-      </div>
       <div className="mb-3 row">
         <label for="inputEmail" className="col-sm-2 col-form-label">
           Email
@@ -68,9 +68,9 @@ const Register = () => {
         </div>
       </div>
       <button type="submit" className="btn btn-success">
-        Registrarse
+        Iniciar sesión
       </button>
     </form>
   );
 };
-export default Register;
+export default FormLogin;
