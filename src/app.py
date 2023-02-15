@@ -12,6 +12,7 @@ from api.routes import api
 from api.admin import setup_admin
 from api.commands import setup_commands
 from flask_jwt_extended import JWTManager #añadido para hacer el login
+from datetime import timedelta #resuelve caducidad token
 
 
 #from models import Person
@@ -24,6 +25,7 @@ app.url_map.strict_slashes = False
 #añadido para hacer el login (despues de app =Flask)
 app.config["JWT_SECRET_KEY"] = "super-secret"  # Change this! 
 jwt = JWTManager(app)
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=12) #resuelve caducidad token
 #añadido para hacer el login 
 
 # database condiguration

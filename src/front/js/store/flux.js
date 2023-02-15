@@ -1,24 +1,64 @@
 const getState = ({ getStore, getActions, setStore }) => {
   return {
     store: {
-      message: null,
-      demo: [
-        {
-          title: "FIRST",
-          background: "white",
-          initial: "white",
-        },
-        {
-          title: "SECOND",
-          background: "white",
-          initial: "white",
-        },
-      ],
+      token: null,
+      dataUser: [],
     },
     actions: {
       // Use getActions to call a function within a fuction
-      exampleFunction: () => {
-        getActions().changeColor(0, "green");
+      snyncTokenFromLocateStore: () => {
+        const token = localStorage.getItem("token");
+        if (token && token != "" && token != undefined)
+          setStore({ token: token });
+      },
+
+      login: async (email, password) => {
+        try {
+          const resp = await fetch(process.env.BACKEND_URL + "/api/login", {
+            method: "POST",
+            body: JSON.stringify({
+              email: email,
+              password: password,
+            }),
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+          if (resp.status !== 200) {
+            alert("Ha ocurrido algun error");
+            return false;
+          }
+          const data = await resp.json();
+          console.log("El backend devuelve:", data);
+          localStorage.setItem("token", data.access_token);
+          setStore({ token: data.access_token });
+          return true;
+        } catch (error) {
+          console.error("Ha ocurrido un error", error);
+        }
+      },
+
+      logout: () => {
+        localStorage.removeItem("token");
+        setStore({ token: null });
+      },
+      getUser: async () => {
+        try {
+          const store = getStore();
+          console.log(store.token);
+          const resp = await fetch(process.env.BACKEND_URL + "/api/user", {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + store.token,
+            },
+          });
+          const data = await resp.json();
+          setStore({ dataUser: data });
+          return store.dataUser;
+        } catch (error) {
+          console.error("Ha ocurrido un error", error);
+        }
       },
     },
   };

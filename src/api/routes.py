@@ -9,13 +9,8 @@ from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identi
 
 api = Blueprint('api', __name__)
 
-@api.route('/users', methods=['GET'])
-def users():
-    users= User.query.all()
-    datausers=[user.serialize() for user in users]
 
-    return jsonify(datausers), 200
-
+#POST PARA REGISTRARSE
 @api.route('/users', methods=['POST'])
 def register_user():
     try:
@@ -28,18 +23,19 @@ def register_user():
         return jsonify({"message": "No se pudo registrar"}), 400
     return jsonify({"message": "Usuario registrado"}), 200
 
+#POST PARA LOGIN
 @api.route('/login', methods=['POST'])
 def login():
     data = request.json
     
     user = User.query.filter_by(email=data['email'], password=data['password']).first()
     if user:
-        token = create_access_token(identity=user.id)
-        #return jsonify(data), 200 #devuelve el dato
-        return jsonify({"token": token}), 200
+        token = create_access_token(identity=user.id )
+        return jsonify({"access_token": token}), 200
     
     return jsonify({"message": "Email/contraseña incorrecta"}), 400
 
+#GET RESTRINGIDO DEL USUARIO
 @api.route('/user', methods=['GET'])
 @jwt_required()
 def get_user():

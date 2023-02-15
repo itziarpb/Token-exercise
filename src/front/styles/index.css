@@ -1,3 +1,6 @@
-/* 
-    General Styles used on every website (Don't Repeat Yourself)
-*/
+body{
+    background-color: rgb(184, 166, 226);
+}
+.link{
+    text-decoration: none;
+}
